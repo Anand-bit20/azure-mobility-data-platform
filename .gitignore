@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Environment
+.env
+
+# Data
+data/raw/
+data/processed/
+
+# Power BI
+powerbi/~$*
+powerbi/.pbi/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
