@@ -11,7 +11,7 @@ processed_folder = Path("data/processed")
 
 processed_folder.mkdir(parents=True, exist_ok=True)
 
-files = sorted(raw_folder.glob("*.csv"))
+files = sorted(raw_folder.glob("vehicle_positions_*.csv"))
 
 if not files:
     raise FileNotFoundError("No raw vehicle position files found.")

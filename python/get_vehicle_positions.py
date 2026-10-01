@@ -1,8 +1,9 @@
 import requests
 import pandas as pd
 import urllib3
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
+
 
 # Suppress SSL warning for our local testing environment
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -52,8 +53,9 @@ for vehicle in data:
 # Convert to DataFrame
 df = pd.DataFrame(records)
 
-# Create timestamp for the snapshot
-timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+# Create UTC timestamp for the snapshot
+timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+ingestion_timestamp = datetime.now(timezone.utc).isoformat()
 
 # Create output folder
 output_folder = Path("data/raw/vehicle_positions")
@@ -65,9 +67,25 @@ output_path = output_folder / f"vehicle_positions_{timestamp}.csv"
 # Save snapshot
 df.to_csv(output_path, index=False)
 
+# Create ingestion log
+log_path = output_folder / "ingestion_log.csv"
+
+log_record = pd.DataFrame([{
+    "ingestion_timestamp": ingestion_timestamp,
+    "file_name": output_path.name,
+    "record_count": len(df),
+    "status": "SUCCESS"
+}])
+
+if log_path.exists():
+    log_record.to_csv(log_path, mode="a", header=False, index=False)
+else:
+    log_record.to_csv(log_path, index=False)
+
 print("Data successfully retrieved.")
 print("Total vehicles:", len(df))
 print("Saved to:", output_path)
+print("Ingestion log updated:", log_path)
 
 print("\nColumns:")
 print(df.columns.tolist())
