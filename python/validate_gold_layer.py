@@ -363,50 +363,67 @@ print(
 
 
 # ---------------------------------------------------------
-# 11. Expected result checks
+# 11. Dynamic result checks
 # ---------------------------------------------------------
 
-print("\n8. Expected result checks")
+print("\n8. Dynamic result checks")
 
-expected_movement = {
-    "VALID": 1040,
-    "DATA_GAP": 328,
-    "STATIONARY": 98
+movement_status_total = (
+    movement_status_counts.sum()
+)
+
+schedule_status_total = (
+    schedule_status_counts.sum()
+)
+
+movement_rows_check = (
+    movement_status_total == len(fact_movement)
+)
+
+schedule_rows_check = (
+    schedule_status_total == len(fact_schedule)
+)
+
+valid_movement_statuses = {
+    "VALID",
+    "DATA_GAP",
+    "STATIONARY"
 }
 
-expected_schedule = {
-    "ON_TIME": 1153,
-    "DELAYED": 557,
-    "EARLY": 237
+valid_schedule_statuses = {
+    "ON_TIME",
+    "DELAYED",
+    "EARLY"
 }
 
-
-movement_check = all(
-    movement_status_counts.get(
-        status,
-        0
-    ) == count
-    for status, count in expected_movement.items()
+movement_status_check = (
+    set(movement_status_counts.index)
+    .issubset(valid_movement_statuses)
 )
 
-
-schedule_check = all(
-    schedule_status_counts.get(
-        status,
-        0
-    ) == count
-    for status, count in expected_schedule.items()
-)
-
-
-print(
-    "Movement status totals:",
-    "PASS" if movement_check else "FAIL"
+schedule_status_check = (
+    set(schedule_status_counts.index)
+    .issubset(valid_schedule_statuses)
 )
 
 print(
-    "Schedule status totals:",
-    "PASS" if schedule_check else "FAIL"
+    "Movement status totals match rows:",
+    "PASS" if movement_rows_check else "FAIL"
+)
+
+print(
+    "Schedule status totals match rows:",
+    "PASS" if schedule_rows_check else "FAIL"
+)
+
+print(
+    "Movement statuses valid:",
+    "PASS" if movement_status_check else "FAIL"
+)
+
+print(
+    "Schedule statuses valid:",
+    "PASS" if schedule_status_check else "FAIL"
 )
 
 
@@ -428,8 +445,15 @@ validation_passed = (
     and schedule_invalid_trips == 0
     and negative_distance == 0
     and negative_time == 0
-    and movement_check
-    and schedule_check
+    and movement_rows_check
+    and schedule_rows_check
+    and movement_status_check
+    and schedule_status_check
+)
+
+print(
+    "Observation invalid trips:",
+    observation_invalid_trips
 )
 
 

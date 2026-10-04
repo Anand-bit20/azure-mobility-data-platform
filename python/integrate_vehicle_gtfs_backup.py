@@ -249,42 +249,6 @@ vehicles.loc[
     "integration_status"
 ] = "PARTIAL_MATCH"
 
-# ---------------------------------------------------------
-# 10A. Classify integration exceptions
-# ---------------------------------------------------------
-
-vehicles["exception_reason"] = "NONE"
-
-# Trip and stop both unmatched for shuttle operations
-vehicles.loc[
-    (vehicles["route_id"] == "Shuttle-Generic")
-    & (vehicles["trip_match_status"] == "UNMATCHED")
-    & (vehicles["stop_match_status"] == "UNMATCHED"),
-    "exception_reason"
-] = "SHUTTLE_TRIP_AND_STOP_NOT_IN_GTFS"
-
-# Trip unmatched but stop matched
-vehicles.loc[
-    (vehicles["trip_match_status"] == "UNMATCHED")
-    & (vehicles["stop_match_status"] == "MATCHED"),
-    "exception_reason"
-] = "REALTIME_TRIP_NOT_IN_GTFS"
-
-# Trip and stop both unmatched, but not Shuttle-Generic
-vehicles.loc[
-    (vehicles["trip_match_status"] == "UNMATCHED")
-    & (vehicles["stop_match_status"] == "UNMATCHED")
-    & (vehicles["route_id"] != "Shuttle-Generic"),
-    "exception_reason"
-] = "TRIP_AND_STOP_NOT_IN_GTFS"
-
-# Trip matched but stop unmatched
-vehicles.loc[
-    (vehicles["trip_match_status"] == "MATCHED")
-    & (vehicles["stop_match_status"] == "UNMATCHED"),
-    "exception_reason"
-] = "STOP_NOT_IN_GTFS"
-
 
 # ---------------------------------------------------------
 # 11. Save integrated dataset
